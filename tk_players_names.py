@@ -44,17 +44,18 @@ def run():
 
     for i in range (0, 16):
         ttk.Label(frame, text = "Joueur " + str(i + 1) + ": ") \
-           .grid(column = 0, row = i + 1)
+           .grid(column = 0, row = i + 1, sticky = tk.E)
 
         players_texts[i] = tk.Text(frame, height = 1, width = 20)
-        players_texts[i].grid(column = 1, row = i + 1)
+        players_texts[i].grid(column = 1, row = i + 1, sticky = tk.W)
 
     # error
     error_label = ttk.Label(frame, text = "")
     error_label.grid(column = 0, row = 18, columnspan = 2)
 
     # button
-    ttk.Button(frame, text = "Valider", command = lambda: read_players_names(players_texts, players_names, error_label, root)).grid(column = 1, row = 17)
+    ttk.Button(frame, text = "Valider", command = lambda: read_players_names(players_texts, players_names, error_label, root)) \
+       .grid(column = 1, row = 17, sticky = tk.W)
 
     root.mainloop()
 
