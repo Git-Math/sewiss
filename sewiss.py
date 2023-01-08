@@ -1,5 +1,6 @@
 import tk_players_names
 import tk_players_seeds
+from player import *
 
 if __name__ == '__main__':
     # players names
@@ -19,3 +20,11 @@ if __name__ == '__main__':
     if len(seeded_players_names) != 16:
         print("Il n'y a pas 16 noms de joueurs")
         exit()
+
+    players = []
+
+    for i, player_name in enumerate(seeded_players_names):
+        players.append(Player(player_name, i + 1))
+
+    for player in players:
+        print(player)
