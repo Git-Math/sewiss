@@ -64,7 +64,7 @@ def run(players_names):
         ttk.Label(frame, text = "Seed " + str(i + 1) + ": ") \
            .grid(column = 0, row = i + 1, sticky = tk.E)
 
-        players_labels[i] = ttk.Label(frame, text = player_name);
+        players_labels[i] = ttk.Label(frame, text = player_name, borderwidth = 10, relief="solid", width = 20);
         players_labels[i].grid(column = 1, row = i + 1, sticky = tk.E)
 
     # validate button
