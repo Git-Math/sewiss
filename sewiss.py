@@ -21,6 +21,8 @@ if __name__ == '__main__':
         print("Il n'y a pas 16 noms de joueurs")
         exit()
 
+    #seeded_players_names = ["Susu", "Dazed", "CHEF!", "Le Shibateur", "Suri", "Albertino", "Rico", "Manon", "Andreea", "Theo", "Logan", "Sirop", "Boris", "TBN", "Aness", "Marine"]
+
     players = []
 
     for i, player_name in enumerate(seeded_players_names):
@@ -28,3 +30,7 @@ if __name__ == '__main__':
 
     for player in players:
         print(player)
+
+    matchups = compute_matchups(players)
+
+    print(matchups)
