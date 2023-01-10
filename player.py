@@ -24,6 +24,8 @@ class Player:
     def is_rematch(self, player):
         return player in (self.opponents_win + self.opponents_lose)
 
+    def compare_set_count(self, player):
+        return self.sets_win == player.sets_win and self.sets_lose == player.sets_lose
 
     def __str__(self):
         return f"""Player {{
@@ -133,6 +135,6 @@ def compute_matchups(players):
         group = [ { "player": x, "has_matchup": False } for x in players if x.sets_win == set_counts[0] and x.sets_lose == set_counts[1] ]
         group_matchups = compute_group_matchups(group)
 
-        matchups.append(group_matchups)
+        matchups += group_matchups
 
     return matchups
