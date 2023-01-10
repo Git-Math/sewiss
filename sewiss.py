@@ -1,5 +1,6 @@
 import tk_players_names
 import tk_players_seeds
+import tk_round
 from player import *
 
 if __name__ == '__main__':
@@ -28,9 +29,10 @@ if __name__ == '__main__':
     for i, player_name in enumerate(seeded_players_names):
         players.append(Player(player_name, i + 1))
 
-    for player in players:
-        print(player)
+    for r in range(1, 2):
+        update_players_buchholz(players)
+        matchups = compute_matchups(players)
+        round_results = tk_round.run(players, matchups, r)
+        print(round_results)
 
-    matchups = compute_matchups(players)
-
-    print(matchups)
+    print(players)
