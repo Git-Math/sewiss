@@ -49,6 +49,26 @@ class Player:
     Seed: {self.seed}
 }}"""
 
+def find_player_by_name(players, player_name):
+    for player in players:
+        if player.name == player_name:
+            return player
+
+    raise Exception(f"Player name not found; player_name: {player_name}, players: {players}")
+
+def update_players_round(players, round_results):
+    for round_result in round_results:
+        player1 = find_player_by_name(players, round_result["player1_name"])
+        player2 = find_player_by_name(players, round_result["player2_name"])
+
+        if round_result["player1_score"] > round_result["player2_score"]:
+            player1.add_win(player2)
+            player2.add_lose(player1)
+        elif round_result["player2_score"] > round_result["player1_score"]:
+            player2.add_win(player1)
+            player1.add_lose(player2)
+        else:
+            raise Exception("Players scores are equals; round_result: {round_result}")
 
 def update_players_buchholz(players):
     for player in players:
