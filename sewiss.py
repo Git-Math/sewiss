@@ -1,6 +1,7 @@
 import tk_players_names
 import tk_players_seeds
 import tk_round
+import tk_standings
 from player import *
 
 if __name__ == '__main__':
@@ -29,10 +30,14 @@ if __name__ == '__main__':
     for i, player_name in enumerate(seeded_players_names):
         players.append(Player(player_name, i + 1))
 
-    for r in range(1, 2):
-        update_players_buchholz(players)
+    for r in range(1, 6):
         matchups = compute_matchups(players)
         round_results = tk_round.run(players, matchups, r)
-        print(round_results)
+        if not round_results:
+            print("Il n'y a pas de résultats de round")
+            exit()
+        update_players_round(players, round_results)
+        update_players_buchholz(players)
+        sort_players(players)
 
-    print(players)
+    tk_standings.run(players)
