@@ -32,8 +32,10 @@ def drag_motion(event, widget, start_position):
 
 def drag_release(event, players_labels, widget, widget_grid_info, root):
     widget.lower()
+    widget.config(state = "disabled")
     x, y = root.winfo_pointerxy()
     target_widget = root.winfo_containing(x, y)
+    widget.config(state = "enabled")
     if target_widget in players_labels:
         swap_widgets(widget, target_widget)
     widget.grid(row = widget_grid_info['row'], column = widget_grid_info['column'])
