@@ -189,7 +189,7 @@ def compute_matchups(players):
 
 def read_state_json(filename):
     try:
-        f = open(filename, "r")
+        f = open(filename, "r", encoding = "utf-8")
         json_data = f.read()
         f.close()
     except Exception:
@@ -210,13 +210,13 @@ def write_state_json(tournament_name, round_number, players, dirname):
 
     filename_prefix = f"round{round_number + 1}" if round_number < 5 else "final"
     filename = dirname + os.sep + f"{filename_prefix}_state.json"
-    f = open(filename, "w")
+    f = open(filename, "w", encoding = "utf-8")
     f.write(json_data)
     f.close()
 
 def write_round_results(round_number, round_results, dirname):
     filename = dirname + os.sep + f"round{round_number}_results.txt"
-    f = open(filename, "w")
+    f = open(filename, "w", encoding = "utf-8")
     for round_result in round_results:
         f.write(f"{round_result['player1_name']}: {round_result['player1_score']}\n")
         f.write(f"{round_result['player2_name']}: {round_result['player2_score']}\n\n")
