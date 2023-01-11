@@ -3,12 +3,12 @@ import json
 import os
 
 class Player():
-    def __init__(self, name: str, seed: int, sets_win = 0, sets_lose = 0, opponents_win = [], opponents_lose = [], buchholz = 0):
+    def __init__(self, name: str, seed: int, sets_win = 0, sets_lose = 0, opponents_win = None, opponents_lose = None, buchholz = 0):
         self.name = name
         self.sets_win = sets_win
         self.sets_lose = sets_lose
-        self.opponents_win = opponents_win
-        self.opponents_lose = opponents_lose
+        self.opponents_win = opponents_win if opponents_win else []
+        self.opponents_lose = opponents_lose if opponents_lose else []
         self.buchholz = buchholz
         self.seed = seed
 
