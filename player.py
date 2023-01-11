@@ -1,3 +1,5 @@
+import os
+
 class Player:
     def __init__(self, name, seed):
         self.name = name
@@ -158,3 +160,11 @@ def compute_matchups(players):
         matchups += group_matchups
 
     return matchups
+
+def write_round_results(round_number, round_results, dirname):
+    filename = dirname + os.sep + f"round{round_number}_results.txt"
+    f = open(filename, "w")
+    for round_result in round_results:
+        f.write(f"{round_result['player1_name']}: {round_result['player1_score']}\n")
+        f.write(f"{round_result['player2_name']}: {round_result['player2_score']}\n\n")
+    f.close()
