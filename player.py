@@ -1,33 +1,46 @@
+from typing import List
+import json
 import os
 
-class Player:
-    def __init__(self, name, seed):
+class Player():
+    def __init__(self, name: str, seed: int, sets_win = 0, sets_lose = 0, opponents_win = [], opponents_lose = [], buchholz = 0):
         self.name = name
-        self.sets_win = 0
-        self.sets_lose = 0
-        self.opponents_win = []
-        self.opponents_lose = []
-        self.buchholz = 0
+        self.sets_win = sets_win
+        self.sets_lose = sets_lose
+        self.opponents_win = opponents_win
+        self.opponents_lose = opponents_lose
+        self.buchholz = buchholz
         self.seed = seed
 
     def add_win(self, opponent):
         self.sets_win += 1
-        self.opponents_win.append(opponent)
+        self.opponents_win.append(opponent.name)
 
     def add_lose(self, opponent):
         self.sets_lose += 1
-        self.opponents_lose.append(opponent)
+        self.opponents_lose.append(opponent.name)
 
-    def update_buchholz(self):
-        for opponents in (self.opponents_win + self.opponents_lose):
-            self.buchholz += opponents.sets_win
-            self.buchholz -= opponents.sets_lose
+    def update_buchholz(self, players):
+        for opponent_name in (self.opponents_win + self.opponents_lose):
+            opponent = find_player_by_name(players, opponent_name)
+            self.buchholz += opponent.sets_win
+            self.buchholz -= opponent.sets_lose
 
     def is_rematch(self, player):
-        return player in (self.opponents_win + self.opponents_lose)
+        return player.name in (self.opponents_win + self.opponents_lose)
 
     def compare_set_count(self, player):
         return self.sets_win == player.sets_win and self.sets_lose == player.sets_lose
+
+    @staticmethod
+    def from_json(json_dct):
+        return Player(json_dct["name"],
+                      json_dct["seed"],
+                      sets_win = json_dct["sets_win"],
+                      sets_lose = json_dct["sets_lose"],
+                      opponents_win = json_dct["opponents_win"],
+                      opponents_lose = json_dct["opponents_lose"],
+                      buchholz = json_dct["buchholz"])
 
     def __str__(self):
         return f"""Player {{
@@ -50,6 +63,19 @@ class Player:
     Buchholz score: {self.buchholz}
     Seed: {self.seed}
 }}"""
+
+class State():
+    def __init__(self, tournament_name: str, round_number: int, players: List[Player]):
+        self.tournament_name = tournament_name
+        self.round_number = round_number
+        self.players = players
+
+    @staticmethod
+    def from_json(json_dct):
+        if "tournament_name" in json_dct.keys():
+            return State(json_dct["tournament_name"], json_dct["round_number"], json_dct["players"])
+        else:
+            return Player.from_json(json_dct)
 
 def find_player_by_name(players, player_name):
     for player in players:
@@ -74,7 +100,7 @@ def update_players_round(players, round_results):
 
 def update_players_buchholz(players):
     for player in players:
-        player.update_buchholz()
+        player.update_buchholz(players)
 
 def sort_players(players):
     players.sort(key = lambda x: (x.sets_win, -x.sets_lose, x.buchholz, -x.seed), reverse = True)
@@ -160,6 +186,33 @@ def compute_matchups(players):
         matchups += group_matchups
 
     return matchups
+
+def read_state_json(filename):
+    try:
+        f = open(filename, "r")
+        json_data = f.read()
+        f.close()
+    except Exception:
+        print(f"Coulnd't read {filename}")
+        exit()
+
+    try:
+        state = json.loads(json_data, object_hook = State.from_json)
+    except Exception:
+        print(f"Couldn't deserialize {filename}")
+        exit()
+
+    return state.tournament_name, state.round_number, state.players
+
+def write_state_json(tournament_name, round_number, players, dirname):
+    state = State(tournament_name, round_number + 1, players)
+    json_data = json.dumps(state, default = lambda o: o.__dict__, indent = 4)
+
+    filename_prefix = f"round{round_number + 1}" if round_number < 5 else "final"
+    filename = dirname + os.sep + f"{filename_prefix}_state.json"
+    f = open(filename, "w")
+    f.write(json_data)
+    f.close()
 
 def write_round_results(round_number, round_results, dirname):
     filename = dirname + os.sep + f"round{round_number}_results.txt"
