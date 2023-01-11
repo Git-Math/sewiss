@@ -10,7 +10,7 @@ def run(players):
     root.title("Final Standings")
 
     # window size
-    root.geometry("700x700")
+    root.geometry("700x500")
 
     # frame
     frame = ttk.Frame(root)
