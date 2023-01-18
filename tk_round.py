@@ -162,11 +162,11 @@ def run(players, matchups, r):
 
     # error
     error_label = ttk.Label(frame, text = "")
-    error_label.grid(column = 0, row = 21, columnspan = 20)
+    error_label.grid(column = 0, row = 22, columnspan = 20)
 
     # validate button
     ttk.Button(frame, text = "Valider", command = lambda: read_round_results(matchups_widgets, round_results, error_label, root)) \
-       .grid(column = 0, row = 20, columnspan = 20)
+       .grid(column = 0, row = 21, columnspan = 20)
 
     # standings
     standings_start_column = min(len(matchups), MAX_MATCHES_IN_ROW) * MATCH_COLUMN_SIZE
