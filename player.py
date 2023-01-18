@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import List
 import json
 import os
@@ -172,7 +173,7 @@ def compute_group_matchups(group):
             return matchups
 
 def compute_matchups(players):
-    matchups = []
+    matchups = OrderedDict()
 
     # get all unique sets counts in players
     sets_counts = list({ (x.sets_win, x.sets_lose) for x in players if x.sets_win < 3 and x.sets_lose < 3 })
@@ -184,7 +185,7 @@ def compute_matchups(players):
         group = [ { "player": x, "has_matchup": False } for x in players if x.sets_win == set_counts[0] and x.sets_lose == set_counts[1] ]
         group_matchups = compute_group_matchups(group)
 
-        matchups += group_matchups
+        matchups[f"{set_counts[0]} - {set_counts[1]}"] = group_matchups
 
     return matchups
 

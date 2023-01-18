@@ -5,6 +5,7 @@ from player import *
 MAX_MATCHES_IN_ROW = 2
 MATCH_COLUMN_SIZE = 3
 MATCH_ROW_SIZE = 4
+SET_COUNT_ROW_SIZE = 1
 X_SPACE_BETWEEN_MATCHES = 50
 X_SPACE_BEFORE_STANDINGS = 150
 ROW_MIN_SIZE = 20
@@ -128,37 +129,53 @@ def run(players, matchups, r):
     ttk.Label(frame, text = f"Round {r}") \
        .grid(row = 0, column = 0, columnspan = 20)
 
+    # compute max group matchups len
+    max_group_matchups_len = 0
+    for group_matchups in matchups.values():
+        if len(group_matchups) > max_group_matchups_len:
+            max_group_matchups_len = len(group_matchups)
+
+    # compute actual max matches in row
+    actual_max_matches_in_row = min(max_group_matchups_len, MAX_MATCHES_IN_ROW)
+
     # set empty space between matches
-    for i in range(MAX_MATCHES_IN_ROW - 1):
-        if (i + 1) >= len(matchups):
-            break
+    for i in range(actual_max_matches_in_row - 1):
         frame.columnconfigure((i * MATCH_COLUMN_SIZE) + 2, minsize = X_SPACE_BETWEEN_MATCHES)
 
     # matchups
     matchups_widgets = []
 
-    for i, (player1, player2) in enumerate(matchups):
-        start_column = (i % MAX_MATCHES_IN_ROW) * MATCH_COLUMN_SIZE
-        start_row = (int(i / MAX_MATCHES_IN_ROW) * MATCH_ROW_SIZE) + 1
+    set_count_label_column = int(actual_max_matches_in_row * MATCH_COLUMN_SIZE / 2) - 1
+    set_count_label_column_span = 1 if actual_max_matches_in_row % 2 == 0 else 2
+    group_start_row = 1
+    for set_count_string, group_matchups in matchups.items():
+        ttk.Label(frame, text = set_count_string, borderwidth = 10, relief="solid") \
+           .grid(column = set_count_label_column, row = group_start_row, columnspan = set_count_label_column_span)
 
-        warning_string = check_matchup_warning(player1, player2)
+        for i, (player1, player2) in enumerate(group_matchups):
+            start_column = (i % MAX_MATCHES_IN_ROW) * MATCH_COLUMN_SIZE
+            start_row = (int(i / MAX_MATCHES_IN_ROW) * MATCH_ROW_SIZE) + group_start_row
 
-        warning_label = ttk.Label(frame, text = warning_string)
-        warning_label.grid(column = start_column, row = start_row + 1, columnspan = 2)
+            warning_string = check_matchup_warning(player1, player2)
+
+            warning_label = ttk.Label(frame, text = warning_string)
+            warning_label.grid(column = start_column, row = start_row + 1, columnspan = 2)
         
-        player1_label = ttk.Label(frame, text = player1.name, borderwidth = 10, relief="solid", width = 20);
-        player1_label.grid(column = start_column, row = start_row + 2, sticky = tk.E)
+            player1_label = ttk.Label(frame, text = player1.name, borderwidth = 10, relief="solid", width = 20);
+            player1_label.grid(column = start_column, row = start_row + 2, sticky = tk.E)
 
-        player1_score_text = tk.Text(frame, height = 1, width = 3)
-        player1_score_text.grid(column = start_column + 1, row = start_row + 2, sticky = tk.W)
+            player1_score_text = tk.Text(frame, height = 1, width = 3)
+            player1_score_text.grid(column = start_column + 1, row = start_row + 2, sticky = tk.W)
 
-        player2_label = ttk.Label(frame, text = player2.name, borderwidth = 10, relief="solid", width = 20);
-        player2_label.grid(column = start_column, row = start_row + 3, sticky = tk.E)
+            player2_label = ttk.Label(frame, text = player2.name, borderwidth = 10, relief="solid", width = 20);
+            player2_label.grid(column = start_column, row = start_row + 3, sticky = tk.E)
 
-        player2_score_text = tk.Text(frame, height = 1, width = 3)
-        player2_score_text.grid(column = start_column + 1, row = start_row + 3, sticky = tk.W)
+            player2_score_text = tk.Text(frame, height = 1, width = 3)
+            player2_score_text.grid(column = start_column + 1, row = start_row + 3, sticky = tk.W)
 
-        matchups_widgets.append({"warning": warning_label, "player1": player1_label, "player1_score": player1_score_text, "player2": player2_label, "player2_score": player2_score_text})
+            matchups_widgets.append({"warning": warning_label, "player1": player1_label, "player1_score": player1_score_text, "player2": player2_label, "player2_score": player2_score_text})
+
+        group_start_row += SET_COUNT_ROW_SIZE + MATCH_ROW_SIZE * (int((len(group_matchups) - 1) / MAX_MATCHES_IN_ROW) + 1)
 
     # error
     error_label = ttk.Label(frame, text = "")
@@ -169,7 +186,7 @@ def run(players, matchups, r):
        .grid(column = 0, row = 21, columnspan = 20)
 
     # standings
-    standings_start_column = min(len(matchups), MAX_MATCHES_IN_ROW) * MATCH_COLUMN_SIZE
+    standings_start_column = actual_max_matches_in_row * MATCH_COLUMN_SIZE
     standings_start_row = 2
 
     frame.columnconfigure(standings_start_column - 1, minsize = X_SPACE_BEFORE_STANDINGS)
