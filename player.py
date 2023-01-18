@@ -21,6 +21,7 @@ class Player():
         self.opponents_lose.append(opponent.name)
 
     def update_buchholz(self, players):
+        self.buchholz = 0
         for opponent_name in (self.opponents_win + self.opponents_lose):
             opponent = find_player_by_name(players, opponent_name)
             self.buchholz += opponent.sets_win
